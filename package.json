@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@radixdlt/babylon-gateway-api-sdk": "^1.0.0-beta.1.3",
+    "@radixdlt/babylon-gateway-api-sdk": "1.0.0-beta.1.3",
     "@radixdlt/radix-dapp-toolkit": "^0.1.0"
   },
   "devDependencies": {
