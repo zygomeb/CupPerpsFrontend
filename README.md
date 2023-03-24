@@ -1,7 +1,7 @@
 # Cup Perps PoC
 The frontend is using adapted code from [Gumball Machine Scrypto example](https://github.com/radixdlt/scrypto-examples/tree/main/full-stack/dapp-toolkit-gumball-machine) using the [Radix dApp Toolkit](https://github.com/radixdlt/radix-dapp-toolkit#readme)
 
-The scrypto code is original and the technical documentation is provided in (TODO PDF)
+The scrypto code is original and the technical documentation is provided in the [Technical Documentation](CupPerps.pdf)
 
 ## Pre-requisites
 1. Node >= 12.17.0
