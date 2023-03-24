@@ -2,44 +2,109 @@ use scrypto::prelude::*;
 
 #[blueprint]
 mod prop_perps {
-    // This implementation has set out to explore the idea
-    // of Cup Perps, and using lp tokens instead of state
-    // and dis/advantages of both
-    struct CupPerp {
-        pair: String, // eg. BTC/USD, for UX purposes only
 
+    /// Cup Perps are described in detail in a pdf inside of this repo
+    /// this implementation has a freely-manipulated oracle
+    /// only to be used for purposes of demonstration 
+    /// 
+    /// Recommended to read the pdf first for some context
+    struct CupPerp {
+        /// eg. BTC/USD
+        /// is stored in token metadata, better UX
+        pair: String,
+
+        /// parameters that can be freely changed 
+        /// deployed version has: 5, 0.75
         leverage: Decimal,
         funding_coeff: Decimal,
 
+        /// unfortunately apart from long/short_cup 
+        /// we also have to store _value
+        /// as the offchain query doesn't provide that information
+        /// i.e. doesn't give per-vault values but rather per-resource
         long_cup: Vault,
-        // needed to query, all endpoints squash same-resource vaults into one
         long_cup_value: Decimal, 
+
         short_cup: Vault,
         short_cup_value: Decimal,
+
+        /// amount of total long/short LP tokens minted
         long_cup_lp: Decimal,
         short_cup_lp: Decimal,
-        // unused, for testing purposes
+
+        /// unused due to oracle being freely-set
         last_update: u64,
-        // serious version: set pecision on int
+        /// last tick's exchange rate
+        /// used to calculate Delta
         last_exrate: Decimal,
 
+        /// unused due to oracle being freely-set 
+        oracle_update: u64,
         // toy version has the oracle be a variable
         // able to be updated with set_oracle(n)
-        oracle_update: u64,
         oracle_exrate: Decimal,
 
+        /// resource management variables 
         long_lp_badge: Vault,
         long_lp_resource: ResourceAddress,
+
         short_lp_badge: Vault,
         short_lp_resource: ResourceAddress,
+
+        /// what asset is used to bet on the pair
+        /// useful for off-chain verification 
+        /// as any asset could be used for these perps
         stable_coin: ResourceAddress
     }
 
     impl CupPerp {
 
-        pub fn instantiate_pair(pair: String, exch: Decimal, mut deposit: Bucket) -> ComponentAddress {
-            // initial deposit doesn't return lp tokens
-            // to ensure no division by 0
+        /// Instantiates the Component
+        /// 
+        /// The initial deposit's lp is not issued, to prevent division by zero,
+        /// but the initial deposit may be worth close to 0
+        /// followed by the actual liqidity providers
+        /// 
+        /// # Arguments 
+        /// 
+        /// * `pair` - String shown in LP token metadata
+        /// * `leverage` - The leverage of both cups' exposure when at equilibrium
+        /// * `funding_coeff` - Scales the funding rebate (funding * cup size ratio)
+        /// * `exch` - Initial pair exchange rate
+        /// * `deposit` - Liquidity to be locked in the pair forever
+        /// 
+        /// ```
+        /// // resim 0.8.0
+        /// > resim call-function [package] CupPerp instantiate_pair "5x BTC/USD" 5 0.75 28345 10,[xrd]
+        /// 
+        /// // wallet-sdk 0.6.0-beta.11
+        /// .withdrawFromAccountByAmount(
+        ///     [account], 
+        ///     100, 
+        ///     [xrd address])
+        /// .takeFromWorktop(
+        ///     [xrd address],
+        ///     "buck")
+        /// .callFunction(
+        ///     [package], 
+        ///     "CupPerp", 
+        ///     "instantiate_pair", 
+        ///     [String("RAND/USD"), Decimal(1000), Bucket("buck")])
+        /// .callMethod(
+        ///      [account], 
+        ///      "deposit_batch", 
+        ///      [Expression("ENTIRE_WORKTOP")])
+        /// .build()
+        /// .toString();
+        /// ```
+        pub fn instantiate_pair(
+            pair: String, 
+            leverage: Decimal,
+            funding_coeff: Decimal,
+            exch: Decimal, 
+            mut deposit: Bucket) 
+            -> ComponentAddress {
+
             debug!("INSTANTIATING PAIR");
             let long_lp_badge: Vault = Vault::with_bucket(ResourceBuilder::new_fungible()
                 .divisibility(DIVISIBILITY_NONE)
@@ -57,7 +122,7 @@ mod prop_perps {
                 .mintable(rule!(require(long_lp_badge.resource_address())), LOCKED)
                 .burnable(rule!(require(long_lp_badge.resource_address())), LOCKED)
                 .metadata("name", name)
-                // doesn't work, TODO lookup what the wallet wants
+                // doesn't work currently, wallet doesn't implement icons yet
                 .metadata("icon", "https://www.iconsdb.com/icons/preview/green/up-xxl.png")
                 .create_with_no_initial_supply();
 
@@ -81,8 +146,8 @@ mod prop_perps {
             Self {
                 pair: pair,
 
-                leverage: dec!(5),
-                funding_coeff: dec!("0.75"),
+                leverage: leverage,
+                funding_coeff: funding_coeff,
 
                 long_cup: long_cup,
                 long_cup_value: amm,
@@ -107,6 +172,24 @@ mod prop_perps {
             .globalize()
         }
 
+        /// Updates the system state after any price change
+        /// 
+        /// ```
+        /// // scrypto 0.8.0
+        /// > resim call-method [component] update
+        /// 
+        /// // wallet-sdk 0.6.0-beta.11
+        /// .callMethod(
+        ///     [component],
+        ///     "update",
+        ///     [])
+        /// .callMethod(
+        ///      [account], 
+        ///      "deposit_batch", 
+        ///      [Expression("ENTIRE_WORKTOP")])
+        /// .build()
+        /// .toString();
+        /// ```
         pub fn update(&mut self) {
             // assert!(oracle-update >= last_update)
             assert!(self.oracle_exrate > dec!(0));
@@ -148,7 +231,37 @@ mod prop_perps {
             self.last_exrate = self.oracle_exrate;
             self.last_update = self.oracle_update;
         }
-
+        
+        /// Deposits the stable asset to the select cup
+        /// 
+        /// # Arguments 
+        /// 
+        /// * `side` - Which cup to deposit into? Long is true, Short is false. 
+        /// * `funds` - Funds to be deposited
+        /// 
+        /// ```
+        /// // resim 0.8.0
+        /// > resim call-method [component] deposit true 10,[xrd]
+        /// 
+        /// // wallet-sdk 0.6.0-beta.11
+        /// .withdrawFromAccountByAmount(
+        ///     [account],
+        ///     10,
+        ///     [xrd address])
+        /// .takeFromWorktop(
+        ///     [xrd address],
+        ///     "buck1")
+        /// .callMethod(
+        ///     [component],
+        ///     "deposit",
+        ///     [Bool(false), Bucket("buck1")])
+        /// .callMethod(
+        ///      [account], 
+        ///      "deposit_batch", 
+        ///      [Expression("ENTIRE_WORKTOP")])
+        /// .build()
+        /// .toString();
+        /// ```
         pub fn deposit(&mut self, side: bool, funds: Bucket) -> Bucket {
             self.update();
 
@@ -178,21 +291,45 @@ mod prop_perps {
                 borrow_resource_manager!(lp_resource).mint(lp_caller));  
         }
 
-        pub fn withdraw(&mut self, side: bool, funds: Bucket) -> Bucket {
+        /// Withdraws the liquidity with an LP token
+        /// 
+        /// ```
+        /// // scrypto 0.8.0
+        /// > resim call-method [component] withdraw 1337,[ShortLp]
+        /// 
+        /// // wallet-sdk 0.6.0-beta.11
+        /// .withdrawFromAccountByAmount(
+        ///     [account],
+        ///     420,
+        ///     [LongLp address])
+        /// .takeFromWorktop(
+        ///     [LongLp address],
+        ///     "buck1")
+        /// .callMethod(
+        ///     [component],
+        ///     "withdraw",
+        ///     [Bucket("buck1")])
+        /// .callMethod(
+        ///      [account], 
+        ///      "deposit_batch", 
+        ///      [Expression("ENTIRE_WORKTOP")])
+        /// .build()
+        /// .toString();
+        /// ```
+        pub fn withdraw(&mut self, funds: Bucket) -> Bucket {
             self.update();
 
-            let payout; let lp; let cup;
-            let lp_badge; let lp_resource;
-            if side {
+            let payout; let lp; let cup; let lp_badge; 
+            let lp_resource = funds.resource_address().clone();
+
+            if lp_resource == self.long_lp_resource {
                 lp = &mut self.long_cup_lp;
                 cup = &mut self.long_cup;
                 lp_badge = &self.long_lp_badge;
-                lp_resource = self.long_lp_resource;
             } else {
                 lp = &mut self.short_cup_lp;
                 cup = &mut self.short_cup;
                 lp_badge = &self.short_lp_badge;
-                lp_resource = self.short_lp_resource;
             }
 
             assert!(funds.resource_address() == lp_resource);
@@ -200,7 +337,7 @@ mod prop_perps {
             *lp -= funds.amount();
             lp_badge.authorize(|| funds.burn());
 
-            if side {
+            if lp_resource == self.long_lp_resource {
                 self.long_cup_value = cup.amount() - payout;
             } else {
                 self.short_cup_value = cup.amount() - payout;
@@ -209,13 +346,48 @@ mod prop_perps {
             return (*cup).take(payout);
         }
 
+        /// Sets the built-in oracle to a given number
+        /// 
+        /// # Arguments 
+        /// 
+        /// * `n` - Decimal exchange rate
+        /// 
+        /// ```
+        /// // scrypto 0.8.0
+        /// > resim call-method [component] set_oracle 4
+        /// 
+        /// // wallet-sdk 0.6.0-beta.11
+        /// .callMethod(
+        ///     [component],
+        ///     "set_oracle",
+        ///     [Decimal(5138008)])
+        /// .callMethod(
+        ///      [account], 
+        ///      "deposit_batch", 
+        ///      [Expression("ENTIRE_WORKTOP")])
+        /// .build()
+        /// .toString();
+        /// ```
+        pub fn set_oracle(&mut self, n: Decimal) {
+            self.oracle_exrate = n;
+        }
+
+        /// Shows the current amount of tokens in both cups
+        /// 
+        /// ```
+        /// // scrypto 0.8.0
+        /// > resim call-method [component] get_lp_resource_addr 
+        /// ```
         pub fn show_cups(&self) -> (Decimal, Decimal) {
             (self.long_cup.amount(), self.long_cup.amount())
         }
 
-        // unsure if it's better to run a getter 
-        // or pull the data manuall out of the component
-        // probably the second
+        /// Returns the ResourceAddress of both Lp tokens
+        /// 
+        /// ```
+        /// // scrypto 0.8.0
+        /// > resim call-method [component] get_lp_resource_addr 
+        /// ```
         pub fn get_lp_resource_addr(&self) 
             -> (ResourceAddress, ResourceAddress) {
             return (
@@ -223,6 +395,17 @@ mod prop_perps {
                 self.short_lp_resource)
         }
 
+        /// Returns the total value of a given quantity of Lp tokens
+        /// 
+        /// # Arguments 
+        /// 
+        /// * `long` - Amount of LongLp tokens
+        /// * `short` - Amount of ShortLp tokens 
+        /// 
+        /// ```
+        /// // scrypto 0.8.0
+        /// > resim call-method [component] value 7 0 
+        /// ```
         pub fn value(&self, long: Decimal, short: Decimal) 
             -> Decimal {
             
@@ -231,10 +414,6 @@ mod prop_perps {
                     * self.long_cup.amount()
               + short / self.short_cup_lp 
                     * self.short_cup.amount()
-        }
-
-        pub fn set_oracle(&mut self, n: Decimal) {
-            self.oracle_exrate = n;
         }
     }
 }

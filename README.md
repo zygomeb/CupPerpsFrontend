@@ -3,6 +3,8 @@ The frontend is using adapted code from [Gumball Machine Scrypto example](https:
 
 The scrypto code is original and the technical documentation is provided in the [Technical Documentation](CupPerps.pdf)
 
+Rust-generated documentation is available in [Docs](scrypto-docs/doc/cup_perps/all.html)
+
 ## Pre-requisites
 1. Node >= 12.17.0
 2. The Betanet wallet & Radix-connector browser extenstion installed. Instructions [here](https://docs-babylon.radixdlt.com/main/getting-started-developers/wallet-and-connector.html)

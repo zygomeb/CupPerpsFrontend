@@ -1,0 +1,11 @@
+/home/zygomeb/rust/radix/CupPerps/scrypto/../scrypto-docs/debug/deps/digest-8bc23ad691f21603.rmeta: /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/lib.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/ct_variable.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/rt_variable.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/wrapper.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/xof_reader.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/digest.rs
+
+/home/zygomeb/rust/radix/CupPerps/scrypto/../scrypto-docs/debug/deps/digest-8bc23ad691f21603.d: /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/lib.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/ct_variable.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/rt_variable.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/wrapper.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/xof_reader.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/digest.rs
+
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/lib.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/ct_variable.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/rt_variable.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/wrapper.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/core_api/xof_reader.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/digest-0.10.6/src/digest.rs:

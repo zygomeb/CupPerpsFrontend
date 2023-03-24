@@ -1,0 +1,12 @@
+/home/zygomeb/rust/radix/CupPerps/scrypto/../scrypto-docs/debug/deps/proc_macro2-7f89cefffbb411b7.rmeta: /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/lib.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/marker.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/parse.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/rcvec.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/detection.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/fallback.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/extra.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/wrapper.rs
+
+/home/zygomeb/rust/radix/CupPerps/scrypto/../scrypto-docs/debug/deps/proc_macro2-7f89cefffbb411b7.d: /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/lib.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/marker.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/parse.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/rcvec.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/detection.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/fallback.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/extra.rs /home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/wrapper.rs
+
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/lib.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/marker.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/parse.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/rcvec.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/detection.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/fallback.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/extra.rs:
+/home/zygomeb/.cargo/registry/src/github.com-1ecc6299db9ec823/proc-macro2-1.0.52/src/wrapper.rs:
