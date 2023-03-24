@@ -3,7 +3,7 @@ The frontend is using adapted code from [Gumball Machine Scrypto example](https:
 
 The scrypto code is original and the technical documentation is provided in the [Technical Documentation](CupPerps.pdf)
 
-Rust-generated documentation is available in [Docs](scrypto-docs/doc/cup_perps/all.html)
+Rust-generated documentation is available after running `cargo doc` from the `scrypto` directory
 
 ## Pre-requisites
 1. Node >= 12.17.0
