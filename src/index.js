@@ -236,7 +236,7 @@ document.getElementById('target-swap-xrd').onclick = async function () {
   let wdShort = 0
   let dpLong = 0
   let dpShort = 0
-
+  console.log(target)
   if (target > long_xrd) {
     dpLong = target - long_xrd
     wdShort = short_xrd
@@ -328,6 +328,25 @@ document.getElementById('target-swap-xrd').onclick = async function () {
       [Expression("ENTIRE_WORKTOP")])
     .build()
     .toString();
+    console.log("Instantiate Manifest: ", manifest)
+
+  const result = await rdt
+    .sendTransaction({
+      transactionManifest: manifest,
+      version: 1,
+    })
+
+  if (result.isErr()) throw result.error
+
+  console.log("Intantiate WalletSDK Result: ", result.value)
+
+  // ************ Fetch the transaction status from the Gateway API ************
+  let status = await transactionApi.transactionStatus({
+    transactionStatusRequest: {
+      intent_hash_hex: result.value.transactionIntentHash
+    }
+  });
+  console.log('Instantiate TransactionApi transaction/status:', status)
 
   exchange_rate += mov;
   await update()
